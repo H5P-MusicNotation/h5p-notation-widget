@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+      "outDir": "./js",
+      "allowJs": true,
+      "target": "es2017",
+      "module": "commonjs",
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true
+  },
+  "include": [
+      "./ts/**/*.ts"
+  ],
+  "exclude": [
+      "node_modules"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+      "useCache": true
+  }
+}
