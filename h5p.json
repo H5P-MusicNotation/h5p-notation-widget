@@ -1,0 +1,27 @@
+{
+    "title": "NotationWidget",
+    "language": "en",
+    "mainLibrary": "H5PEditor.NotationWidget",
+    "embedTypes": ["div"],
+    "authors": [
+      {
+        "name": "Matthias Nowakowski",
+        "role": "Author"
+      }
+    ],
+    "license": "MIT",
+    "changes": [
+      {
+        "date": "30.07.2021",
+        "author": "mano",
+        "log": "test version"
+      }
+    ],
+    "preloadedDependencies": [
+      {
+        "machineName": "H5PEditor.NotationWidget",
+        "majorVersion": 1,
+        "minorVersion": 0
+      }
+    ]
+  }

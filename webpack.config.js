@@ -27,7 +27,7 @@ const config = {
   },
   output: {
     filename: 'h5p-notation-widget.js',
-    path: path.resolve(__dirname, 'js'),
+    path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
@@ -67,17 +67,13 @@ const config = {
       },
       {
         test: /\.svg$/,
-        include: path.join(__dirname, 'images'),
-        //loader: 'file-loader?name=images/[name].[ext]'
-        use: [
-          {
-            options: {
-              name: "[name].[ext]",
-              outputPath: "images/"
-            },
-            loader: "file-loader"
-          }
-        ]
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: false,
+          },
+        }
+        ],
       }
     ]
   },

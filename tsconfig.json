@@ -5,11 +5,11 @@
       "target": "es2017",
       "module": "commonjs",
       "allowSyntheticDefaultImports": true,
-      "experimentalDecorators": true
+      "experimentalDecorators": true,
+      "noImplicitUseStrict": true
   },
   "include": [
-      "./ts/**/*.ts"
-  ],
+      "./ts/*.ts",],
   "exclude": [
       "node_modules"
   ],

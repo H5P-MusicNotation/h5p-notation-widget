@@ -1,27 +1,25 @@
 {
-    "title": "h5p-notation-widget",
+    "title": "H5PEditor.NotationWidget",
     "description": "A musical notation widget for the h5p Editor",
     "majorVersion": 1,
     "minorVersion": 0,
-    "patchVersion": 0,
-    "runnable": 1,
-    "embedTypes": [
-      "div"
-    ],
+    "patchVersion": 6,
+    "runnable": 0,
     "author": "Matthias Nowakowski",
     "license": "MIT",
-    "fullscreen": 1,
-    "machineName": "H5P.NotationWidget",
+    "machineName": "H5PEditor.NotationWidget",
     "coreApi": {
       "majorVersion": 1,
       "minorVersion": 0
     },
     "preloadedJs": [
-      {"path": "js/h5p-notation-widget.js"}
+      {
+        "path": "./dist/h5p-notation-widget.js"
+      }
     ],
     "preloadedCss": [
       {
-        "path": "css/h5p-notation-widget.css"
+        "path": "./dist/h5p-notation-widget.css"
       }
     ]
   }
