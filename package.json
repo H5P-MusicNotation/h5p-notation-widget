@@ -1,6 +1,6 @@
 {
     "name": "h5p-notation-widget",
-    "version": "1.0.8",
+    "version": "1.1.5",
     "description": "A musical notation widget for the h5p Editor",
     "scripts": {
         "build": "cross-env NODE_ENV=production ./node_modules/.bin/webpack -d --mode development",
@@ -38,7 +38,7 @@
         "soundfont-player": "^0.12.0",
         "ts-loader": "^8.0.14",
         "typescript": "^4.3.2",
-        "verovioscoreeditor": "^1.0.9",
+        "verovioscoreeditor": "^1.2.0",
         "webpack": "^4.46.0",
         "webpack-cli": "^3.3.12",
         "worker-loader": "^3.0.7",

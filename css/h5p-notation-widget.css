@@ -10,6 +10,7 @@
 
 #fullscreenWidget{
     position: absolute;
+    z-index: 100;
 }
 
 #fullscreenWidget.transparent{
