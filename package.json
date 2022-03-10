@@ -1,6 +1,6 @@
 {
     "name": "h5p-notation-widget",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "description": "A musical notation widget for the h5p Editor",
     "scripts": {
         "build": "cross-env NODE_ENV=production ./node_modules/.bin/webpack -d --mode development",

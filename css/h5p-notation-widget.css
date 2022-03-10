@@ -1,5 +1,15 @@
 @import '~verovioscoreeditor/src/styles/VerovioScoreEditor.css';
 
+.notationWidgetContainer{
+    display: contents;
+    height: inherit
+}
+
+.h5p-notation-widget{
+    width: 100%;
+    height: 100%
+}
+
 .h5p-notation-widget.fullscreen{
     position: absolute; 
     top: 0; 
@@ -11,6 +21,8 @@
 #fullscreenWidget{
     position: absolute;
     z-index: 100;
+    top: 0;
+    right: 0
 }
 
 #fullscreenWidget.transparent{
