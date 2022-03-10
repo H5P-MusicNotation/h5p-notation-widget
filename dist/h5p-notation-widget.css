@@ -532,6 +532,11 @@ text{
     height: 100%
 }
 
+.content.h5peditor-single{
+    width: auto;
+    height: 90%
+}
+
 .h5p-notation-widget.fullscreen{
     position: absolute; 
     top: 0; 
