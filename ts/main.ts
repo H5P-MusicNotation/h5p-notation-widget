@@ -1,3 +1,4 @@
+import { TextPathElement } from "canvg";
 import VerovioScoreEditor from "verovioscoreeditor"
 
 class Main{
@@ -8,6 +9,7 @@ class Main{
     private setValue
     private vse: VerovioScoreEditor
     private container: HTMLElement
+    private fieldSet: HTMLElement
 
     /**
      * Creates the main Class.
@@ -26,8 +28,41 @@ class Main{
     }
 
     init(){
-        const data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-model href=\"https://music-encoding.org/schema/dev/mei-all.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?><?xml-model href=\"https://music-encoding.org/schema/dev/mei-all.rng\" type=\"application/xml\" schematypens=\"http://purl.oclc.org/dsdl/schematron\"?><mei xmlns=\"http://www.music-encoding.org/ns/mei\" meiversion=\"5.0.0-dev\"><meiHead><fileDesc><titleStmt><title>empty_mei</title><respStmt /></titleStmt><pubStmt><date isodate=\"2022-02-07\" type=\"encoding-date\">2022-02-07</date></pubStmt></fileDesc><encodingDesc xml:id=\"encodingdesc-jl6jho\"><appInfo xml:id=\"appinfo-gcm9pe\"><application xml:id=\"application-wkm1yu\" isodate=\"2022-02-07T10:52:22\" version=\"3.9.0-dev-4c296ea\"><name xml:id=\"name-v26wae\">Verovio</name><p xml:id=\"p-8ib55f\">Transcoded from MusicXML</p></application></appInfo></encodingDesc></meiHead><music><body><mdiv xml:id=\"mizv9bf\"><score xml:id=\"scss6jy\"><scoreDef xml:id=\"selkmlk\"><staffGrp xml:id=\"se58xab\"><staffGrp xml:id=\"srw2ty8\"><staffDef xml:id=\"P1\" n=\"1\" lines=\"5\" ppq=\"1\"><instrDef xml:id=\"isz4c65\" midi.channel=\"0\" midi.instrnum=\"0\" midi.volume=\"78.00%\" /><clef xml:id=\"cnj8pxy\" shape=\"G\" line=\"2\" /><keySig xml:id=\"kmdmhsk\" sig=\"0\" /><meterSig xml:id=\"mxikzei\" count=\"4\" unit=\"4\" /></staffDef></staffGrp></staffGrp></scoreDef><section xml:id=\"s227x2r\"><measure xml:id=\"mc89b2s\" n=\"1\"><staff xml:id=\"sllhm20\" n=\"1\"><layer xml:id=\"lu2fusu\" n=\"1\"><mRest xml:id=\"mcm3xfx\" /></layer></staff></measure></section></score></mdiv></body></music></mei>"
-        this.vse = new VerovioScoreEditor(this.container.firstChild, {data: data})
+        //const data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-model href=\"https://music-encoding.org/schema/dev/mei-all.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?><?xml-model href=\"https://music-encoding.org/schema/dev/mei-all.rng\" type=\"application/xml\" schematypens=\"http://purl.oclc.org/dsdl/schematron\"?><mei xmlns=\"http://www.music-encoding.org/ns/mei\" meiversion=\"5.0.0-dev\"><meiHead><fileDesc><titleStmt><title>empty_mei</title><respStmt /></titleStmt><pubStmt><date isodate=\"2022-02-07\" type=\"encoding-date\">2022-02-07</date></pubStmt></fileDesc><encodingDesc xml:id=\"encodingdesc-jl6jho\"><appInfo xml:id=\"appinfo-gcm9pe\"><application xml:id=\"application-wkm1yu\" isodate=\"2022-02-07T10:52:22\" version=\"3.9.0-dev-4c296ea\"><name xml:id=\"name-v26wae\">Verovio</name><p xml:id=\"p-8ib55f\">Transcoded from MusicXML</p></application></appInfo></encodingDesc></meiHead><music><body><mdiv xml:id=\"mizv9bf\"><score xml:id=\"scss6jy\"><scoreDef xml:id=\"selkmlk\"><staffGrp xml:id=\"se58xab\"><staffGrp xml:id=\"srw2ty8\"><staffDef xml:id=\"P1\" n=\"1\" lines=\"5\" ppq=\"1\"><instrDef xml:id=\"isz4c65\" midi.channel=\"0\" midi.instrnum=\"0\" midi.volume=\"78.00%\" /><clef xml:id=\"cnj8pxy\" shape=\"G\" line=\"2\" /><keySig xml:id=\"kmdmhsk\" sig=\"0\" /><meterSig xml:id=\"mxikzei\" count=\"4\" unit=\"4\" /></staffDef></staffGrp></staffGrp></scoreDef><section xml:id=\"s227x2r\"><measure xml:id=\"mc89b2s\" n=\"1\"><staff xml:id=\"sllhm20\" n=\"1\"><layer xml:id=\"lu2fusu\" n=\"1\"><mRest xml:id=\"mcm3xfx\" /></layer></staff></measure></section></score></mdiv></body></music></mei>"
+        //this.vse = new VerovioScoreEditor(this.container.firstChild, {data: data})
+        this.vse = new VerovioScoreEditor(this.container.firstChild, null, this.setMei)
+        this.setMutationObserver()
+        if(document.getElementById("verovioScript").getAttribute("loaded") === "true"){
+            (this.container.querySelector("#clickInsert") as HTMLButtonElement).dispatchEvent(new Event("click"))
+        }
+        this.fieldSet = this.container.closest("fieldset")
+        this.fieldSet.querySelector(".title[role=\"button\"]").addEventListener("click", function(e){
+            var t = e.target as HTMLElement
+            if(t.getAttribute("aria-expanded") === "true"){
+                t.closest("fieldset").style.height = "500px"
+            }else{
+                t.closest("fieldset").style.height = "auto"
+            }
+        })
+        
+        
+    }
+
+    setMutationObserver(){
+        var that = this
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === "attributes") {
+                    var t = mutation.target as HTMLElement
+                    if(mutation.attributeName === "loaded" && t.getAttribute(mutation.attributeName) === "true"){
+                        (that.container.querySelector("#clickInsert") as HTMLButtonElement).dispatchEvent(new Event("click"))//.click()
+                    }
+                }
+            });
+        });
+        observer.observe(document.getElementById("verovioScript"), {
+            attributes: true
+        })
     }
     
     /**
@@ -69,7 +104,11 @@ class Main{
         if(document.fullscreenElement){
             document.exitFullscreen()
         }else{
-            this.container.requestFullscreen()
+            if(navigator.userAgent.includes("Apple")){
+                this.container?.webkitRequestFullscreen()
+            }else{
+                this.container?.requestFullscreen() 
+            }
         }
     }).bind(this)
 
