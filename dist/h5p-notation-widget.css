@@ -536,7 +536,7 @@ text{
 /* escpecially for h5p task dialogue */
 .field.h5p-notation-widget{
     width: 100%;
-    height: 500px;
+    height: 500px !important;
     overflow: scroll
 }
 
