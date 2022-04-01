@@ -17,6 +17,8 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
      * @param {H5PEditor.SetParameters} setValue
      */
     function NotationWidget(parent, field, params, setValue) {
+        var self = this;
+        document.addEventListener("containerAttached", maininstanceInit.bind(this), true);
         this.mainInstance = new main_1.default(parent, field, params, setValue);
     }
     /**
@@ -28,8 +30,8 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
     NotationWidget.prototype.appendTo = function ($wrapper) {
         var self = this;
         self.$container = this.mainInstance.createContainer();
+        this.nwcContainer = self.$container.querySelector(".notationWidgetContainer");
         $wrapper.append(self.$container);
-        this.mainInstance.init();
     };
     /**
      * Validate the current values.
@@ -45,6 +47,12 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
     NotationWidget.prototype.remove = function () {
         this.mainInstance.remove();
     };
+    function maininstanceInit(e) {
+        if (e.target.id === this.nwcContainer.id) {
+            this.mainInstance.init();
+        }
+        document.removeEventListener("containerAttached", maininstanceInit);
+    }
     return NotationWidget;
     //@ts-ignore
 })(H5P.jQuery);

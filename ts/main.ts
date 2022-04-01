@@ -11,6 +11,8 @@ class Main{
     private container: HTMLElement
     private fieldSet: HTMLElement
 
+    private currentAttachedElement: Element
+
     /**
      * Creates the main Class.
      * I wrapped by h5p-notation-widget
@@ -21,17 +23,19 @@ class Main{
      * @param {H5PEditor.SetParameters} setValue
      */
     constructor(parent, field, params, setValue){
+        console.log("parent", parent)
+        console.log("field", field)
+        console.log("params", params)
         this.parent = parent;
         this.field = field;
         this.params = params;
         this.setValue = setValue;
+        this.setDomAttachObserver()
     }
 
     init(){
-        //const data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-model href=\"https://music-encoding.org/schema/dev/mei-all.rng\" type=\"application/xml\" schematypens=\"http://relaxng.org/ns/structure/1.0\"?><?xml-model href=\"https://music-encoding.org/schema/dev/mei-all.rng\" type=\"application/xml\" schematypens=\"http://purl.oclc.org/dsdl/schematron\"?><mei xmlns=\"http://www.music-encoding.org/ns/mei\" meiversion=\"5.0.0-dev\"><meiHead><fileDesc><titleStmt><title>empty_mei</title><respStmt /></titleStmt><pubStmt><date isodate=\"2022-02-07\" type=\"encoding-date\">2022-02-07</date></pubStmt></fileDesc><encodingDesc xml:id=\"encodingdesc-jl6jho\"><appInfo xml:id=\"appinfo-gcm9pe\"><application xml:id=\"application-wkm1yu\" isodate=\"2022-02-07T10:52:22\" version=\"3.9.0-dev-4c296ea\"><name xml:id=\"name-v26wae\">Verovio</name><p xml:id=\"p-8ib55f\">Transcoded from MusicXML</p></application></appInfo></encodingDesc></meiHead><music><body><mdiv xml:id=\"mizv9bf\"><score xml:id=\"scss6jy\"><scoreDef xml:id=\"selkmlk\"><staffGrp xml:id=\"se58xab\"><staffGrp xml:id=\"srw2ty8\"><staffDef xml:id=\"P1\" n=\"1\" lines=\"5\" ppq=\"1\"><instrDef xml:id=\"isz4c65\" midi.channel=\"0\" midi.instrnum=\"0\" midi.volume=\"78.00%\" /><clef xml:id=\"cnj8pxy\" shape=\"G\" line=\"2\" /><keySig xml:id=\"kmdmhsk\" sig=\"0\" /><meterSig xml:id=\"mxikzei\" count=\"4\" unit=\"4\" /></staffDef></staffGrp></staffGrp></scoreDef><section xml:id=\"s227x2r\"><measure xml:id=\"mc89b2s\" n=\"1\"><staff xml:id=\"sllhm20\" n=\"1\"><layer xml:id=\"lu2fusu\" n=\"1\"><mRest xml:id=\"mcm3xfx\" /></layer></staff></measure></section></score></mdiv></body></music></mei>"
-        //this.vse = new VerovioScoreEditor(this.container.firstChild, {data: data})
         this.vse = new VerovioScoreEditor(this.container.firstChild, null, this.setMei)
-        this.setMutationObserver()
+        this.setScriptLoadObserver()
         if(document.getElementById("verovioScript").getAttribute("loaded") === "true"){
             (this.container.querySelector("#clickInsert") as HTMLButtonElement).dispatchEvent(new Event("click"))
         }
@@ -45,12 +49,11 @@ class Main{
             }
         })
         
-        
     }
 
-    setMutationObserver(){
+    setScriptLoadObserver(){
         var that = this
-        var observer = new MutationObserver(function(mutations) {
+        var scriptLoadedObserver = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === "attributes") {
                     var t = mutation.target as HTMLElement
@@ -60,8 +63,31 @@ class Main{
                 }
             });
         });
-        observer.observe(document.getElementById("verovioScript"), {
+        scriptLoadedObserver.observe(document.getElementById("verovioScript"), {
             attributes: true
+        })
+    }
+
+    setDomAttachObserver(){
+        var domAttachObserver = new MutationObserver(function(mutations){
+            mutations.forEach(function(mutation) {
+                Array.from(mutation.addedNodes).forEach(an => {
+                    if(an.constructor.name.toLowerCase().includes("element")){
+                        var ae = an as Element
+                        if(ae.querySelector(".notationWidgetContainer") !== null){
+                            if(this.currentAttachedElement?.id != ae.querySelector(".notationWidgetContainer").id){
+                                this.currentAttachedElement = ae.querySelector(".notationWidgetContainer")
+                                this.currentAttachedElement.dispatchEvent(new Event("containerAttached"))
+                            }
+                        }
+                    }
+                })
+            })
+        })
+
+        domAttachObserver.observe(document, {
+            childList: true,
+            subtree: true
         })
     }
     
@@ -82,7 +108,7 @@ class Main{
         var idStump = "notationWidgetContainer"
         id = idStump + "1"
         Array.from(document.getElementsByClassName(idStump)).forEach(nwc => {
-            var count = (nwc.id.match(/\d+/)[0] + 1).toString()
+            var count = (parseInt(nwc.id.match(/\d+/)[0]) + 1).toString()
             if(document.getElementById(idStump + count) === null){
                 id = idStump + count
             }
