@@ -32,6 +32,7 @@ class Main{
     }
 
     init(){
+        console.log("container fist child", this.container?.firstChild)
         if(this.mei != undefined){
             this.vse = new VerovioScoreEditor(this.container.firstChild, {data: this.mei}, this.setMei)
         }else{
@@ -101,10 +102,22 @@ class Main{
                     if(an.constructor.name.toLowerCase().includes("element")){
                         var ae = an as Element
                         if(ae.querySelector(".notationWidgetContainer") !== null){
-                            if(this.currentAttachedElement?.id != ae.querySelector(".notationWidgetContainer").id){
+                            console.log(this.currentAttachedElement?.id != ae.querySelector(".notationWidgetContainer").id)
+                            console.log(this.currentAttachedElement?.id, ae.querySelector(".notationWidgetContainer").id)
+                            console.log(mutation)
+                            if((this.currentAttachedElement?.id != ae.querySelector(".notationWidgetContainer").id)){
                                 this.currentAttachedElement = ae.querySelector(".notationWidgetContainer")
                                 this.currentAttachedElement.dispatchEvent(new Event("containerAttached"))
                             }
+                        }
+                    }
+                })
+                Array.from(mutation.removedNodes).forEach(an => {
+                    if(an.constructor.name.toLowerCase().includes("element")){
+                        var ae = an as Element
+                        if(ae.querySelector(".notationWidgetContainer") !== null){
+                            //var count = (parseInt(this.currentAttachedElement.id.match(/\d+/)[0]) - 1).toString()
+                            this.currentAttachedElement = Array.from(document.querySelectorAll(".notationWidgetContainer")).reverse()[0]
                         }
                     }
                 })
@@ -133,12 +146,13 @@ class Main{
         subdiv.classList.add("notationWidgetContainer")
         var idStump = "notationWidgetContainer"
         id = idStump + "1"
-        Array.from(document.getElementsByClassName(idStump)).forEach(nwc => {
-            var count = (parseInt(nwc.id.match(/\d+/)[0]) + 1).toString()
+        var nwc = Array.from(document.getElementsByClassName(idStump))
+        for(var i = 0; i < nwc.length; i++){
+            var count = (parseInt(nwc[i].id.match(/\d+/)[0]) + 1).toString()
             if(document.getElementById(idStump + count) === null){
                 id = idStump + count
             }
-        })
+        }
         subdiv.id = id
 
         this.container.append(subdiv)

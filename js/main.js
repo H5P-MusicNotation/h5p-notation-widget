@@ -50,6 +50,8 @@ class Main {
         this.setDomAttachObserver();
     }
     init() {
+        var _a;
+        console.log("container fist child", (_a = this.container) === null || _a === void 0 ? void 0 : _a.firstChild);
         if (this.mei != undefined) {
             this.vse = new verovioscoreeditor_1.default(this.container.firstChild, { data: this.mei }, this.setMei);
         }
@@ -114,14 +116,26 @@ class Main {
         var domAttachObserver = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 Array.from(mutation.addedNodes).forEach(an => {
-                    var _a;
+                    var _a, _b, _c;
                     if (an.constructor.name.toLowerCase().includes("element")) {
                         var ae = an;
                         if (ae.querySelector(".notationWidgetContainer") !== null) {
-                            if (((_a = this.currentAttachedElement) === null || _a === void 0 ? void 0 : _a.id) != ae.querySelector(".notationWidgetContainer").id) {
+                            console.log(((_a = this.currentAttachedElement) === null || _a === void 0 ? void 0 : _a.id) != ae.querySelector(".notationWidgetContainer").id);
+                            console.log((_b = this.currentAttachedElement) === null || _b === void 0 ? void 0 : _b.id, ae.querySelector(".notationWidgetContainer").id);
+                            console.log(mutation);
+                            if ((((_c = this.currentAttachedElement) === null || _c === void 0 ? void 0 : _c.id) != ae.querySelector(".notationWidgetContainer").id)) {
                                 this.currentAttachedElement = ae.querySelector(".notationWidgetContainer");
                                 this.currentAttachedElement.dispatchEvent(new Event("containerAttached"));
                             }
+                        }
+                    }
+                });
+                Array.from(mutation.removedNodes).forEach(an => {
+                    if (an.constructor.name.toLowerCase().includes("element")) {
+                        var ae = an;
+                        if (ae.querySelector(".notationWidgetContainer") !== null) {
+                            //var count = (parseInt(this.currentAttachedElement.id.match(/\d+/)[0]) - 1).toString()
+                            this.currentAttachedElement = Array.from(document.querySelectorAll(".notationWidgetContainer")).reverse()[0];
                         }
                     }
                 });
@@ -147,12 +161,13 @@ class Main {
         subdiv.classList.add("notationWidgetContainer");
         var idStump = "notationWidgetContainer";
         id = idStump + "1";
-        Array.from(document.getElementsByClassName(idStump)).forEach(nwc => {
-            var count = (parseInt(nwc.id.match(/\d+/)[0]) + 1).toString();
+        var nwc = Array.from(document.getElementsByClassName(idStump));
+        for (var i = 0; i < nwc.length; i++) {
+            var count = (parseInt(nwc[i].id.match(/\d+/)[0]) + 1).toString();
             if (document.getElementById(idStump + count) === null) {
                 id = idStump + count;
             }
-        });
+        }
         subdiv.id = id;
         this.container.append(subdiv);
         var button = document.createElement("button");
