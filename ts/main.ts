@@ -32,7 +32,6 @@ class Main{
     }
 
     init(){
-        console.log("container fist child", this.container?.firstChild)
         if(this.mei != undefined){
             this.vse = new VerovioScoreEditor(this.container.firstChild, {data: this.mei}, this.setMei)
         }else{
@@ -102,9 +101,6 @@ class Main{
                     if(an.constructor.name.toLowerCase().includes("element")){
                         var ae = an as Element
                         if(ae.querySelector(".notationWidgetContainer") !== null){
-                            console.log(this.currentAttachedElement?.id != ae.querySelector(".notationWidgetContainer").id)
-                            console.log(this.currentAttachedElement?.id, ae.querySelector(".notationWidgetContainer").id)
-                            console.log(mutation)
                             if((this.currentAttachedElement?.id != ae.querySelector(".notationWidgetContainer").id)){
                                 this.currentAttachedElement = ae.querySelector(".notationWidgetContainer")
                                 this.currentAttachedElement.dispatchEvent(new Event("containerAttached"))

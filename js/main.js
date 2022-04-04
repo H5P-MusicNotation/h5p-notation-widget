@@ -50,8 +50,6 @@ class Main {
         this.setDomAttachObserver();
     }
     init() {
-        var _a;
-        console.log("container fist child", (_a = this.container) === null || _a === void 0 ? void 0 : _a.firstChild);
         if (this.mei != undefined) {
             this.vse = new verovioscoreeditor_1.default(this.container.firstChild, { data: this.mei }, this.setMei);
         }
@@ -116,14 +114,11 @@ class Main {
         var domAttachObserver = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 Array.from(mutation.addedNodes).forEach(an => {
-                    var _a, _b, _c;
+                    var _a;
                     if (an.constructor.name.toLowerCase().includes("element")) {
                         var ae = an;
                         if (ae.querySelector(".notationWidgetContainer") !== null) {
-                            console.log(((_a = this.currentAttachedElement) === null || _a === void 0 ? void 0 : _a.id) != ae.querySelector(".notationWidgetContainer").id);
-                            console.log((_b = this.currentAttachedElement) === null || _b === void 0 ? void 0 : _b.id, ae.querySelector(".notationWidgetContainer").id);
-                            console.log(mutation);
-                            if ((((_c = this.currentAttachedElement) === null || _c === void 0 ? void 0 : _c.id) != ae.querySelector(".notationWidgetContainer").id)) {
+                            if ((((_a = this.currentAttachedElement) === null || _a === void 0 ? void 0 : _a.id) != ae.querySelector(".notationWidgetContainer").id)) {
                                 this.currentAttachedElement = ae.querySelector(".notationWidgetContainer");
                                 this.currentAttachedElement.dispatchEvent(new Event("containerAttached"));
                             }
