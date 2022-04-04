@@ -17,7 +17,8 @@ class Main {
                 document.exitFullscreen();
             }
             else {
-                if (navigator.userAgent.includes("Apple")) {
+                var userAgent = navigator.userAgent.toLowerCase();
+                if (userAgent.includes("apple") && !userAgent.includes("chrome")) {
                     (_a = this.container) === null || _a === void 0 ? void 0 : _a.webkitRequestFullscreen();
                 }
                 else {
@@ -39,20 +40,19 @@ class Main {
          * Function is Called in VerovioScoreEditor, when MEI has changed
          */
         this.setMei = (function setMei(mei) {
-            this.setValue(this.field, mei);
+            this.mei = mei;
+            this.setValue(this.field, this.mei);
         }).bind(this);
-        console.log("parent", parent);
-        console.log("field", field);
-        console.log("params", params);
         this.parent = parent;
         this.field = field;
-        this.params = params;
+        this.mei = params;
         this.setValue = setValue;
         this.setDomAttachObserver();
     }
     init() {
-        this.vse = new verovioscoreeditor_1.default(this.container.firstChild, null, this.setMei);
+        this.vse = new verovioscoreeditor_1.default(this.container.firstChild, { data: this.mei } || null, this.setMei);
         this.setScriptLoadObserver();
+        this.setCurrentTabObserver();
         if (document.getElementById("verovioScript").getAttribute("loaded") === "true") {
             this.container.querySelector("#clickInsert").dispatchEvent(new Event("click"));
         }
@@ -81,6 +81,28 @@ class Main {
         });
         scriptLoadedObserver.observe(document.getElementById("verovioScript"), {
             attributes: true
+        });
+    }
+    setCurrentTabObserver() {
+        var that = this;
+        var currentTabObserver = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.attributeName === "class") {
+                    var target = mutation.target;
+                    if (["h5p-current"].every(c => target.classList.contains(c))) {
+                        var vseContainer = target.querySelector(".vse-container");
+                        if (vseContainer.id !== that.vse.getCore().getContainer().id)
+                            return;
+                        var core = that.vse.getCore();
+                        core.loadData("", core.getCurrentMEI(false), false, "svg_output");
+                    }
+                }
+            });
+        });
+        document.querySelectorAll(".h5p-vtab-form").forEach(q => {
+            currentTabObserver.observe(q, {
+                attributes: true
+            });
         });
     }
     setDomAttachObserver() {
@@ -143,7 +165,7 @@ class Main {
         return true;
     }
     remove() {
-        //TODO
+        this.vse.getCore().getWindowHandler().removeListeners(); // why ist this instance still active? deleting the instance does nothing
     }
 }
 exports.default = Main;
