@@ -50,7 +50,12 @@ class Main {
         this.setDomAttachObserver();
     }
     init() {
-        this.vse = new verovioscoreeditor_1.default(this.container.firstChild, { data: this.mei } || null, this.setMei);
+        if (this.mei != undefined) {
+            this.vse = new verovioscoreeditor_1.default(this.container.firstChild, { data: this.mei }, this.setMei);
+        }
+        else {
+            this.vse = new verovioscoreeditor_1.default(this.container.firstChild, null, this.setMei);
+        }
         this.setScriptLoadObserver();
         this.setCurrentTabObserver();
         if (document.getElementById("verovioScript").getAttribute("loaded") === "true") {
@@ -165,7 +170,8 @@ class Main {
         return true;
     }
     remove() {
-        this.vse.getCore().getWindowHandler().removeListeners(); // why ist this instance still active? deleting the instance does nothing
+        var _a;
+        (_a = this.vse) === null || _a === void 0 ? void 0 : _a.getCore().getWindowHandler().removeListeners(); // why ist this instance still active? deleting the instance does nothing
     }
 }
 exports.default = Main;

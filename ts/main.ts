@@ -32,7 +32,11 @@ class Main{
     }
 
     init(){
-        this.vse = new VerovioScoreEditor(this.container.firstChild, {data: this.mei} || null, this.setMei)
+        if(this.mei != undefined){
+            this.vse = new VerovioScoreEditor(this.container.firstChild, {data: this.mei}, this.setMei)
+        }else{
+            this.vse = new VerovioScoreEditor(this.container.firstChild, null, this.setMei)
+        }
         this.setScriptLoadObserver()
         this.setCurrentTabObserver()
         if(document.getElementById("verovioScript").getAttribute("loaded") === "true"){
@@ -179,7 +183,7 @@ class Main{
     }
 
     remove(){
-        this.vse.getCore().getWindowHandler().removeListeners() // why ist this instance still active? deleting the instance does nothing
+        this.vse?.getCore().getWindowHandler().removeListeners() // why ist this instance still active? deleting the instance does nothing
     }
 
     /**
