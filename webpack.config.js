@@ -1,27 +1,9 @@
-const path = require('path');
-const webpack = require('webpack');
+var path = require('path');
+var nodeEnv = process.env.NODE_ENV || 'development';
+var isDev = (nodeEnv !== 'production');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const MinifyPlugin = require("babel-minify-webpack-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
-const nodeEnv = process.env.NODE_ENV || 'development';
-const isDev = (nodeEnv !== 'production');
-
-const config = {
-  mode: nodeEnv,
-  optimization: {
-    minimizer: [
-      new OptimizeCSSAssetsPlugin({})
-    ]
-  },
-  plugins: [
-    new MinifyPlugin({}, {
-      sourceMap: isDev
-    }),
-    new MiniCssExtractPlugin({
-      filename: 'h5p-notation-widget.css'
-    })
-  ],
+var config = {
   entry: {
     dist: './js/h5p-notation-widget.js',
   },
@@ -32,54 +14,40 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['@babel/env']
-        }
+        test: /\.js$/,
+        loader: 'babel-loader'
       },
-      {
-        test: /\.css$/,
+      {      
+        test: /\.css$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader'
-        ],
-      },
-      {
-        test: /\.(scss)$/,
-        use: [{
-          loader: 'style-loader', // inject CSS to page
-        }, {
-          loader: 'css-loader', // translates CSS into CommonJS modules
-        }, {
-          loader: 'postcss-loader', // Run post css actions
-          options: {
-            plugins: function () { // post css plugins, can be exported to postcss.config.js
-              return [
-                require('precss'),
-                require('autoprefixer')
-              ];
-            }
-          }
-        }, {
-          loader: 'sass-loader' // compiles Sass to CSS
-        }]
-      },
-      {
-        test: /\.svg$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: false,
+          "css-loader",
+          {
+            loader: "postcss-loader",
           },
+          "sass-loader"
+        ]
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        include: path.join(__dirname, 'src/fonts'),
+        loader: 'file-loader',
+        options: {
+          name: 'fonts/[name].[ext]'
         }
-        ],
       }
     ]
-  },
-  stats: {
-    colors: true
-  },
+  }
+  ,
+  plugins: [
+    new MiniCssExtractPlugin({
+    filename: "h5p-notation-widget.css"
+      })
+    ]
 };
+
+if(isDev) {
+  config.devtool = 'inline-source-map';
+}
 
 module.exports = config;

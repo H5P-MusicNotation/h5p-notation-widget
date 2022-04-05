@@ -1,4 +1,3 @@
-import { TextPathElement } from "canvg";
 import VerovioScoreEditor from "verovioscoreeditor"
 
 class Main{
