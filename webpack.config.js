@@ -1,9 +1,20 @@
-var path = require('path');
-var nodeEnv = process.env.NODE_ENV || 'development';
-var isDev = (nodeEnv !== 'production');
+const path = require('path');
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+var BrotliPlugin = require('brotli-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
+const WebpackBundleAnalyzer = require('webpack-bundle-analyzer')
 
-var config = {
+const nodeEnv = process.env.NODE_ENV || 'development';
+const isDev = (nodeEnv !== 'production');
+
+const config = {
+  mode: nodeEnv,
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'h5p-notation-widget.css'
+    })
+  ],
   entry: {
     dist: './js/h5p-notation-widget.js',
   },
@@ -41,8 +52,16 @@ var config = {
   ,
   plugins: [
     new MiniCssExtractPlugin({
-    filename: "h5p-notation-widget.css"
-      })
+      filename: 'h5p-notation-widget.css'
+    }),
+    new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+    //new CompressionPlugin()
+    // new BrotliPlugin({
+    //   asset: '[path].br[query]',
+    //   test: /\.(js|css|html|svg)$/,
+    //   threshold: 10240,
+    //   minRatio: 0.8
+    // })
     ]
 };
 

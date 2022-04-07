@@ -47,7 +47,8 @@ class Main {
         this.field = field;
         this.mei = params;
         this.setValue = setValue;
-        this.setDomAttachObserver();
+        //this.setDomAttachObserver()
+        this.createContainer();
     }
     init() {
         if (this.mei != undefined) {
@@ -88,6 +89,9 @@ class Main {
             attributes: true
         });
     }
+    /**
+     * Reload the mei when tab is clicked, so that the svg will be shown in proper size
+     */
     setCurrentTabObserver() {
         var that = this;
         var currentTabObserver = new MutationObserver(function (mutations) {
@@ -99,71 +103,49 @@ class Main {
                         if (vseContainer.id !== that.vse.getCore().getContainer().id)
                             return;
                         var core = that.vse.getCore();
-                        core.loadData("", core.getCurrentMEI(false), false, "svg_output");
+                        core.loadData("", core.getCurrentMEI(false), false, "svg_output").then(() => {
+                            var overlay = that.container.querySelector("#interactionOverlay");
+                            Array.from(overlay.querySelectorAll(":scope > *")).forEach(anc => {
+                                anc.setAttribute("viewBox", overlay.getAttribute("viewBox"));
+                            });
+                        });
+                    }
+                }
+                if (mutation.target.constructor.name.toLowerCase().includes("element")) {
+                    var mt = mutation.target;
+                    if (mt.id === "interactionOverlay") {
+                        Array.from(mt.querySelectorAll(":scope > *")).forEach(anc => {
+                            anc.setAttribute("viewBox", mt.getAttribute("viewBox"));
+                        });
                     }
                 }
             });
         });
         document.querySelectorAll(".h5p-vtab-form").forEach(q => {
             currentTabObserver.observe(q, {
-                attributes: true
+                attributes: true,
+                childList: true,
+                subtree: true
             });
-        });
-    }
-    setDomAttachObserver() {
-        var domAttachObserver = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                Array.from(mutation.addedNodes).forEach(an => {
-                    var _a;
-                    if (an.constructor.name.toLowerCase().includes("element")) {
-                        var ae = an;
-                        if (ae.querySelector(".notationWidgetContainer") !== null) {
-                            if ((((_a = this.currentAttachedElement) === null || _a === void 0 ? void 0 : _a.id) != ae.querySelector(".notationWidgetContainer").id)) {
-                                this.currentAttachedElement = ae.querySelector(".notationWidgetContainer");
-                                this.currentAttachedElement.dispatchEvent(new Event("containerAttached"));
-                            }
-                        }
-                    }
-                });
-                Array.from(mutation.removedNodes).forEach(an => {
-                    if (an.constructor.name.toLowerCase().includes("element")) {
-                        var ae = an;
-                        if (ae.querySelector(".notationWidgetContainer") !== null) {
-                            //var count = (parseInt(this.currentAttachedElement.id.match(/\d+/)[0]) - 1).toString()
-                            this.currentAttachedElement = Array.from(document.querySelectorAll(".notationWidgetContainer")).reverse()[0];
-                        }
-                    }
-                });
-            });
-        });
-        domAttachObserver.observe(document, {
-            childList: true,
-            subtree: true
         });
     }
     /**
-     * is wrapped by "appenTo" in wrapper class.
-     * Container in which the widget will run
+     * Container in which the widget will run.
+     * Id is randomized so that async initalisation could work
      */
     createContainer() {
         this.container = document.createElement("div");
         this.container.classList.add("field");
         this.container.classList.add("text");
         this.container.classList.add("h5p-notation-widget");
-        var id;
         var subdiv = document.createElement("div");
         subdiv.classList.add("content");
         subdiv.classList.add("notationWidgetContainer");
         var idStump = "notationWidgetContainer";
-        id = idStump + "1";
-        var nwc = Array.from(document.getElementsByClassName(idStump));
-        for (var i = 0; i < nwc.length; i++) {
-            var count = (parseInt(nwc[i].id.match(/\d+/)[0]) + 1).toString();
-            if (document.getElementById(idStump + count) === null) {
-                id = idStump + count;
-            }
+        subdiv.id = idStump + "_" + this.generateUID();
+        while (document.getElementById(subdiv.id) !== null) {
+            subdiv.id = idStump + "_" + this.generateUID();
         }
-        subdiv.id = id;
         this.container.append(subdiv);
         var button = document.createElement("button");
         button.setAttribute("id", "fullscreenWidget");
@@ -172,6 +154,13 @@ class Main {
         button.addEventListener("click", this.fullscreen);
         document.addEventListener("fullscreenchange", this.fullscreenElements);
         return this.container;
+    }
+    generateUID() {
+        var firstPart = ((Math.random() * 46656) | 0).toString(36);
+        var secondPart = ((Math.random() * 46656) | 0).toString(36);
+        firstPart = ("000" + firstPart).slice(-3);
+        secondPart = ("000" + secondPart).slice(-3);
+        return firstPart + secondPart;
     }
     /**
      * @returns
@@ -182,6 +171,9 @@ class Main {
     remove() {
         var _a;
         (_a = this.vse) === null || _a === void 0 ? void 0 : _a.getCore().getWindowHandler().removeListeners(); // why ist this instance still active? deleting the instance does nothing
+    }
+    getContainer() {
+        return this.container;
     }
 }
 exports.default = Main;

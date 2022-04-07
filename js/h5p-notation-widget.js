@@ -18,7 +18,6 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
      */
     function NotationWidget(parent, field, params, setValue) {
         var self = this;
-        document.addEventListener("containerAttached", maininstanceInit.bind(this), true);
         this.mainInstance = new main_1.default(parent, field, params, setValue);
     }
     /**
@@ -29,9 +28,32 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
      */
     NotationWidget.prototype.appendTo = function ($wrapper) {
         var self = this;
-        self.$container = this.mainInstance.createContainer();
-        this.nwcContainer = self.$container.querySelector(".notationWidgetContainer");
+        self.$container = this.mainInstance.getContainer();
         $wrapper.append(self.$container);
+        //only initialize mainInstance, when container is really added
+        var found = false;
+        var observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                Array.from(mutation.addedNodes).forEach(an => {
+                    if (an.constructor.name.toLowerCase().includes("element")) {
+                        var ae = an;
+                        if (ae.querySelector("#" + self.$container.firstChild.id) !== null && !found) {
+                            found = true;
+                            self.mainInstance.init();
+                        }
+                    }
+                });
+            });
+            //if container couldn't be found during observation, 
+            //we assume that it is already already present in DOM before observer was initalized
+            if (!found) {
+                self.mainInstance.init();
+            }
+        });
+        observer.observe(document, {
+            childList: true,
+            subtree: true
+        });
     };
     /**
      * Validate the current values.
@@ -47,12 +69,6 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
     NotationWidget.prototype.remove = function () {
         this.mainInstance.remove();
     };
-    function maininstanceInit(e) {
-        if (e.target.id === this.nwcContainer.id) {
-            this.mainInstance.init();
-        }
-        document.removeEventListener("containerAttached", maininstanceInit);
-    }
     return NotationWidget;
     //@ts-ignore
 })(H5P.jQuery);

@@ -18,9 +18,12 @@ webpack.dev.config.js
 README.md
 CONTRIBUTING.md
 package.json
+package-lock.json
 worknotes
 package-lock.json
 LICENSE
 updgrades.js
 language
 h5p.code-workspace
+*.bak
+stats.json
