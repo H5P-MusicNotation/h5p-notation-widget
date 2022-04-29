@@ -44,7 +44,7 @@ class Main{
         }
 
         this.fieldSet = this.container.closest("fieldset")
-        this.fieldSet.querySelector(".title[role=\"button\"]").addEventListener("click", function(e){
+        this.fieldSet.querySelector(".title[role=\"button\"]")?.addEventListener("click", function(e){
             var t = e.target as HTMLElement
             if(t.getAttribute("aria-expanded") === "true"){
                 t.closest("fieldset").style.height = "500px"

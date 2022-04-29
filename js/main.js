@@ -51,6 +51,7 @@ class Main {
         this.createContainer();
     }
     init() {
+        var _a;
         if (this.mei != undefined) {
             this.vse = new verovioscoreeditor_1.default(this.container.firstChild, { data: this.mei }, this.setMei);
         }
@@ -63,7 +64,7 @@ class Main {
             this.container.querySelector("#clickInsert").dispatchEvent(new Event("click"));
         }
         this.fieldSet = this.container.closest("fieldset");
-        this.fieldSet.querySelector(".title[role=\"button\"]").addEventListener("click", function (e) {
+        (_a = this.fieldSet.querySelector(".title[role=\"button\"]")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function (e) {
             var t = e.target;
             if (t.getAttribute("aria-expanded") === "true") {
                 t.closest("fieldset").style.height = "500px";

@@ -46,14 +46,16 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
               if(ae.querySelector("#" + self.$container.firstChild.id) !== null && !found){
                 found = true
                 self.mainInstance.init()
+                observer.disconnect()
               }
             }
           })
         })
         //if container couldn't be found during observation, 
-        //we assume that it is already already present in DOM before observer was initalized
+        //we assume that it is  already present in DOM before observer was initalized
         if(!found){
           self.mainInstance.init()
+          observer.disconnect()
         }
       })
 
