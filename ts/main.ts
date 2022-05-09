@@ -151,8 +151,14 @@ class Main{
 
     fullscreen = (function fullscreen(e: MouseEvent){
         if(document.fullscreenElement){
+            this.vse.getCore().getVerovioWrapper().getToolkit().setOptions({
+                adjustPageWidth: 1,
+            })
             document.exitFullscreen()
         }else{
+            this.vse.getCore().getVerovioWrapper().getToolkit().setOptions({
+                adjustPageWidth: 0,
+            })
             var userAgent = navigator.userAgent.toLowerCase()
             if(userAgent.includes("apple") && !userAgent.includes("chrome")){
                 this.container?.webkitRequestFullscreen()
@@ -189,6 +195,10 @@ class Main{
     setMei = (function setMei(mei: string): void{
         this.mei = mei
         this.setValue(this.field, this.mei)
+         // at this point we can be shure, that the core loaded 
+         this.vse.getCore().getVerovioWrapper().getToolkit().setOptions({
+            adjustPageWidth: 1,
+        })
     }).bind(this)
     
     getContainer(){

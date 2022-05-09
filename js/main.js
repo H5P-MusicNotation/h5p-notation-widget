@@ -14,9 +14,15 @@ class Main {
         this.fullscreen = (function fullscreen(e) {
             var _a, _b;
             if (document.fullscreenElement) {
+                this.vse.getCore().getVerovioWrapper().getToolkit().setOptions({
+                    adjustPageWidth: 1,
+                });
                 document.exitFullscreen();
             }
             else {
+                this.vse.getCore().getVerovioWrapper().getToolkit().setOptions({
+                    adjustPageWidth: 0,
+                });
                 var userAgent = navigator.userAgent.toLowerCase();
                 if (userAgent.includes("apple") && !userAgent.includes("chrome")) {
                     (_a = this.container) === null || _a === void 0 ? void 0 : _a.webkitRequestFullscreen();
@@ -42,6 +48,10 @@ class Main {
         this.setMei = (function setMei(mei) {
             this.mei = mei;
             this.setValue(this.field, this.mei);
+            // at this point we can be shure, that the core loaded 
+            this.vse.getCore().getVerovioWrapper().getToolkit().setOptions({
+                adjustPageWidth: 1,
+            });
         }).bind(this);
         this.parent = parent;
         this.field = field;
