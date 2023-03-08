@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("../css/h5p-notation-widget.css");
 const main_1 = require("./main");

@@ -58,7 +58,6 @@ H5PEditor.widgets.notationWidget = H5PEditor.NotationWidget = (function ($) {
           observer.disconnect()
         }
       })
-
       observer.observe(document, {
         childList: true, 
         subtree: true

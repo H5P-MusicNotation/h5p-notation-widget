@@ -53,3 +53,43 @@
 .btn-toolbar{
     background-color: white;
 }
+
+.fullscreen{
+    width: 100%;
+    height: 100% !important;
+  }
+
+div#svg_output svg{
+    transform: scale(3, 3);
+    transform-origin: top left;
+}
+
+.field-name-annotationFieldGroup{
+    display: none;
+}
+
+.questionBox > rect:hover{
+    filter: drop-shadow(2px 2px 2px black);
+    animation: blink-animation 1s steps(5, start) infinite
+}
+@keyframes blink-animation {
+    to {
+      visibility: hidden;
+    }
+  }
+
+.questionBox > rect{
+    stroke-opacity: 1 !important;
+}
+
+/* .field-name-analysisText{
+    display: none;
+}
+
+.field.h5p-editor-widget-show-when input{
+    display: none
+} */
+
+.field-name-meiStorage, .field-name-interactiveSVG.boolean{
+    display: none;
+}

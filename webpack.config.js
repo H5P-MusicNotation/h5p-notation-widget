@@ -54,7 +54,7 @@ const config = {
     new MiniCssExtractPlugin({
       filename: 'h5p-notation-widget.css'
     }),
-    new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+    //new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
     //new CompressionPlugin()
     // new BrotliPlugin({
     //   asset: '[path].br[query]',
