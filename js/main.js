@@ -64,7 +64,9 @@ class Main {
         this.createContainer();
     }
     init() {
+        var _a;
         this.fieldSet = this.container.closest("fieldset");
+        this.tree = this.container.closest(".tree");
         var interactiveSVGCheckbox = this.fieldSet.querySelector("." + fieldNameStub + "interactiveSVG.boolean input");
         this.interactiveSVG = interactiveSVGCheckbox === null ? true : false; // when checkbox is present default should be false
         var that = this;
@@ -75,39 +77,57 @@ class Main {
         if (this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input") !== null) {
             this.mei = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input").getAttribute("value");
         }
+        var svgStorage = this.fieldSet.querySelector("." + fieldNameStub + "svgStorage input");
+        if (svgStorage !== null) {
+            this.svgString = svgStorage.getAttribute("value");
+            (_a = this.fieldSet.querySelector("#interactionOverlay")) === null || _a === void 0 ? void 0 : _a.addEventListener("annotChanged", function () {
+                that.setMei(that.mei);
+            });
+        }
+        else if (this.tree.querySelector("." + fieldNameStub + "annotationField input") !== null) { // get annotation from as4l-controller
+            this.svgString = this.tree.querySelector("." + fieldNameStub + "annotationField input").getAttribute("value");
+        }
         this.setExpandedAriaObserver();
     }
     expandAria() {
         var that = this;
         that.container.style.height = "500px";
         if (that.vse == undefined) {
-            that.container.firstChild.addEventListener("vseInit", function (e) {
-                var _a;
-                var overlay = that.vse.container.querySelector("#interactionOverlay");
-                if (that.annotationCanvas != undefined) { // this conditon is only fulfilled when the user comes back to the editing view after publishing the task. 
-                    var oldAnnotationCanvas = overlay.querySelector("#annotationCanvas");
-                    var newAnnotationCanvas = (_a = new DOMParser().parseFromString(that.annotationCanvas, "text/html")) === null || _a === void 0 ? void 0 : _a.body.childNodes[0];
-                    newAnnotationCanvas = new DOMParser().parseFromString(newAnnotationCanvas.nodeValue, "image/svg+xml").children[0];
-                    if (oldAnnotationCanvas === null) {
-                        overlay.querySelector("#interactionOverlay").append(newAnnotationCanvas);
-                    }
-                    else {
-                        oldAnnotationCanvas.replaceWith(newAnnotationCanvas);
-                    }
-                    newAnnotationCanvas.setAttribute("viewBox", overlay.getAttribute("viewBox"));
-                    that.vse.getCore().getInsertModeHandler().getAnnotations().setAnnotationCanvas(newAnnotationCanvas);
-                }
-            });
+            // that.container.firstChild.addEventListener("vseInit", function (e) { // this event will only happen once when vse is initialized!
+            //     var overlay = that.vse.container.querySelector("#interactionOverlay")
+            //     if (that.annotationCanvas != undefined) { // this conditon is only fulfilled when the user comes back to the editing view after publishing the task. 
+            //         var oldAnnotationCanvas = overlay.querySelector("#annotationCanvas")
+            //         var newAnnotationCanvas = new DOMParser().parseFromString(that.annotationCanvas, "text/html")?.body.childNodes[0] as Element
+            //         newAnnotationCanvas = new DOMParser().parseFromString(newAnnotationCanvas.nodeValue, "image/svg+xml").children[0]
+            //         if (oldAnnotationCanvas === null) {
+            //             overlay.querySelector("#interactionOverlay").append(newAnnotationCanvas)
+            //         } else {
+            //             oldAnnotationCanvas.replaceWith(newAnnotationCanvas)
+            //         }
+            //         newAnnotationCanvas.setAttribute("viewBox", overlay.getAttribute("viewBox"))
+            //         that.vse.getCore().getInsertModeHandler().getAnnotations().setAnnotationCanvas(newAnnotationCanvas)
+            //     }
+            // })
             if (that.mei != undefined) {
                 that.vse = new verovioscoreeditor_1.default(that.container.firstChild, { data: that.mei }, that.setMei.bind(that));
             }
             else {
                 that.vse = new verovioscoreeditor_1.default(that.container.firstChild, null, that.setMei.bind(that));
             }
+            //Copy annotationCanvas from stored svg and init it with annnotation
+            if (that.svgString != undefined) {
+                that.container.firstChild.addEventListener("vseInit", function () {
+                    var svgAnnotCanvas = new DOMParser().parseFromString(that.svgString, "text/html").querySelector("#annotationCanvas");
+                    svgAnnotCanvas.classList.replace("front", "back");
+                    svgAnnotCanvas.setAttribute("viewBox", that.vse.container.querySelector("#interactionOverlay").getAttribute("viewBox"));
+                    that.vse.getCore().getContainer().querySelector("#annotationCanvas").replaceWith(svgAnnotCanvas);
+                    that.vse.getCore().getInsertModeHandler().getAnnotations().updateAnnotationList(svgAnnotCanvas);
+                });
+            }
             that.setScriptLoadObserver();
             that.setCurrentTabObserver();
             if (document.getElementById("verovioScript").getAttribute("loaded") === "true") {
-                that.container.querySelector("#clickInsert").dispatchEvent(new Event("click"));
+                that.container.querySelector("#notationTabBtn").dispatchEvent(new Event("click"));
             }
         }
     }
@@ -118,7 +138,7 @@ class Main {
                 if (mutation.type === "attributes") {
                     var t = mutation.target;
                     if (mutation.attributeName === "loaded" && t.getAttribute(mutation.attributeName) === "true") {
-                        that.container.querySelector("#clickInsert").dispatchEvent(new Event("click")); //.click()
+                        that.container.querySelector("#notationTabBtn").dispatchEvent(new Event("click")); //.click()
                     }
                 }
             });
@@ -243,24 +263,29 @@ class Main {
         (_a = this.vse) === null || _a === void 0 ? void 0 : _a.getCore().getWindowHandler().removeListeners(); // why ist this instance still active? deleting the instance does nothing
     }
     /**
-     * This function is called in VerovioScoreEditor, when MEI has changed
+     * This function is called in VerovioScoreEditor, either when MEI has changed or when there are changes in the interactionOverlay
      */
     setMei(mei) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         this.mei = mei;
         if (!this.interactiveSVG) {
             this.setValue(this.field, this.vse.getCore().getSVG());
-            (_a = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _a === void 0 ? void 0 : _a.setAttribute("value", this.mei);
-            (_b = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _b === void 0 ? void 0 : _b.dispatchEvent(new Event("change"));
+            (_a = this.fieldSet.querySelector("." + fieldNameStub + "svgStorage input")) === null || _a === void 0 ? void 0 : _a.setAttribute("value", this.vse.getCore().getSVG());
+            (_b = this.fieldSet.querySelector("." + fieldNameStub + "svgStorage input")) === null || _b === void 0 ? void 0 : _b.dispatchEvent(new Event("change"));
+            (_c = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _c === void 0 ? void 0 : _c.setAttribute("value", this.mei);
+            (_d = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _d === void 0 ? void 0 : _d.dispatchEvent(new Event("change"));
         }
         else {
             this.setValue(this.field, this.mei);
-            (_c = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _c === void 0 ? void 0 : _c.setAttribute("value", "");
-            (_d = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _d === void 0 ? void 0 : _d.dispatchEvent(new Event("change"));
+            (_e = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _e === void 0 ? void 0 : _e.setAttribute("value", "");
+            (_f = this.fieldSet.querySelector("." + fieldNameStub + "meiStorage input")) === null || _f === void 0 ? void 0 : _f.dispatchEvent(new Event("change"));
+            (_g = this.fieldSet.querySelector("." + fieldNameStub + "svgStorage input")) === null || _g === void 0 ? void 0 : _g.setAttribute("value", this.vse.getCore().getSVG());
+            (_h = this.fieldSet.querySelector("." + fieldNameStub + "svgStorage input")) === null || _h === void 0 ? void 0 : _h.dispatchEvent(new Event("change"));
         }
         this.container.dispatchEvent(new CustomEvent("notationWidgetUpdate", {
             detail: {
-                mei: this.mei
+                mei: this.mei,
+                svg: this.svgString
             }
         }));
     }

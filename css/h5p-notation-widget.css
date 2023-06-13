@@ -23,10 +23,10 @@
     background-color: white;
 }
 
-.content.h5peditor-single{
+/* .content.h5peditor-single{
     width: auto;
     height: 90%
-}
+} */
 
 .h5p-notation-widget.fullscreen{
     position: absolute; 
@@ -59,10 +59,10 @@
     height: 100% !important;
   }
 
-div#svg_output svg{
+/* div#svg_output svg{
     transform: scale(3, 3);
     transform-origin: top left;
-}
+} */
 
 .field-name-annotationFieldGroup{
     display: none;
@@ -90,6 +90,6 @@ div#svg_output svg{
     display: none
 } */
 
-.field-name-meiStorage, .field-name-interactiveSVG.boolean{
+.field-name-meiStorage, .field-name-svgStorage, .field-name-interactiveSVG.boolean{
     display: none;
 }

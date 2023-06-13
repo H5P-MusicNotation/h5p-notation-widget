@@ -1,10 +1,11 @@
 {
     "name": "h5p-notation-widget",
-    "version": "1.1.12",
+    "version": "1.1.15",
     "description": "A musical notation widget for the h5p Editor",
     "scripts": {
         "build": "./node_modules/.bin/webpack --mode=production",
         "watch": "./node_modules/.bin/webpack --watch",
+        "minify": "./node_modules/.bin/esbuild ./dist/h5p-notation-widget.js --minify --outfile=./dist/h5p-notation-widget.min.js",
         "analyse": "./node_modules/.bin/webpack --mode=production --profile --json > stats.json"
     },
     "keywords": [],
@@ -21,6 +22,7 @@
         "brotli-webpack-plugin": "^1.1.0",
         "compression-webpack-plugin": "^9.2.0",
         "css-loader": "^6.7.1",
+        "esbuild": "0.17.14",
         "file-loader": "^6.2.0",
         "h5p-lib-controls": "^0.0.15",
         "mini-css-extract-plugin": "^2.6.0",
