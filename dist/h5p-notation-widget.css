@@ -11,14 +11,17 @@
   !*** css ./node_modules/css-loader/dist/cjs.js!../../../../../../../../../../../Users/nowakowski/Documents/Git_Projects/VerovioScoreEditor/src/styles/VerovioScoreEditor.css ***!
   \*******************************************************************************************************************************************************************************/
 @font-face {
-    font-family: "Bravura";
-    src: url(631ae8df294dadc3598d.otf), format("opentype");
+     font-family: "Bravura";
+    src:  url(b8b29d2a2c7d74f0df5e.svg#7377dd80c36b825ad2214a14c2421925) format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
     font-family: "BravuraText";
-    src: url(748d68fe3447d784a6ac.otf), format("opentype");
-}
+    src: url(8fcdac9116366f726ec2.svg#f678e10c1f5609a8428c245cc86aa255) format('svg');
+    font-weight: normal;
+    font-style: normal;}
 
 .dropdown button{
     height: 100%;
@@ -41,7 +44,7 @@ body.waiting * {
 } */
 
 
-#scoreRects > :is(.notehead, .clef, .meterSig, .keySig, .rest, .harm, .manipulator, .slur, .tie):hover{
+#scoreRects > :is(.notehead, .clef, .meterSig, .keySig, .rest, .harm, .manipulator, .slur, .tie, .tupletNum, .tupletBracket):hover{
     cursor: pointer;
 }
 
@@ -53,12 +56,19 @@ body.waiting * {
     cursor: crosshair
 }
 
-#rootSVG{
+#vrvSVG{
     top: 0px;
     width: 100%;
     height: auto;
     position: absolute;
+    display: flex;
+    flex-direction: column;
+}
 
+#vrvSVG .systemLine{
+    stroke: black;
+    stroke-dasharray: 10rem;
+    stroke-width: 1rem;
 }
 
 #interactionOverlay{
@@ -93,12 +103,12 @@ text{
 
 
 /*
-#svg_output, .annotLinkedText, .annotLinkedText *{
+#svgContainer, .annotLinkedText, .annotLinkedText *{
     white-space: pre;
 }
 */
 
-#svg_output{
+#svgContainer{
     position: relative;
     height: 100%;
     overflow: scroll;
@@ -127,6 +137,7 @@ text{
     background-position-x: 10%;
 }
 
+
 #insertMode{
     background-color: white;
     color: black;
@@ -135,6 +146,10 @@ text{
 .smufl{
     font-family: "BravuraText";
     font-size: xx-large;
+}
+
+.harm *{
+    font-family: "BravuraText";
 }
 
 #playBtn{
@@ -162,6 +177,12 @@ text{
     background-size: 80%;
 }
 
+#tupletBtn{
+    background-image: url(f06d1902a164828d21ff.svg);
+    background-size: 80%;
+    color: rgba(0, 0, 0, 0.0)
+}
+
 .btn{
     background-repeat: no-repeat;
     background-position-x: center;
@@ -169,6 +190,10 @@ text{
     outline: none;
     font-family: Bravura;
     font-size: small;
+}
+
+.articulationGroup .btn{
+    font-size: larger;
 }
 
 .btn-group-sm{
@@ -199,6 +224,10 @@ text{
     /*height: 5%;*/
 }
 
+#customToolbar :first-child{
+ margin-left: 0.25em;
+}
+
 .dropdown-item.selected{
     background-color: antiquewhite;
     font-weight: bold;
@@ -227,7 +256,7 @@ text{
     display: none;
 }
 
-#fileSelectGroup{
+#fileSelectGroup, #midiSelectGroup{
   align-self: flex-end;
   margin-left: auto;
   display:flex
@@ -549,7 +578,7 @@ text{
 
 
 .tooltip.show{
-    display: inline-block;
+    display:contents;
     background: skyblue;
     color: #643045;
     font-weight: bold;
@@ -559,12 +588,24 @@ text{
     border-color: maroon;
     display: block;
     opacity: 1;
+    position: absolute;
   }
+
+/* .tooltip{
+    inset:  !important;
+} */
 
 .tooltip.hide{
     display: none
 }
 
+.overfillMark{
+    color:rgba(0, 0, 0, 0.5);
+    font-size: 12em;
+    font-weight: bolder;
+    z-index: 100;
+
+}
 
 /*Disable interaction*/
 
@@ -587,8 +628,16 @@ text{
     display: none;
 }
 
-#interactionOverlay, #rootSVG{
+#interactionOverlay, #vrvSVG > svg{
     transform-origin: top left
+}
+
+.indexBase{
+    font-size: 0.7em;
+}
+
+foreignObject > [contenteditable]{
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
 }
 /*!****************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./css/h5p-notation-widget.css ***!
