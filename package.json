@@ -1,7 +1,7 @@
 {
     "name": "h5p-notation-widget",
-    "version": "1.1.15",
-    "description": "A musical notation widget for the h5p Editor",
+    "version": "1.2.36",
+    "description": "A musical notation widget for h5p editor",
     "scripts": {
         "build": "./node_modules/.bin/webpack --mode=production",
         "watch": "./node_modules/.bin/webpack --watch",

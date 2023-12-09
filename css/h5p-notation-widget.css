@@ -1,4 +1,4 @@
-@import '~verovioscoreeditor/src/styles/VerovioScoreEditor.css';
+@import '~vibe-editor/src/styles/vibe.css';
 
 .notationWidgetContainer{
     display: contents;
@@ -19,7 +19,7 @@
 }
 
 
-#svg_output{
+#svgContainer{
     background-color: white;
 }
 
